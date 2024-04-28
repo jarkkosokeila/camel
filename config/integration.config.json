@@ -1,0 +1,32 @@
+[
+  {
+    "customer.name": "nokia",
+    "app.host": "hr.app.com/nokia",
+    "app.api-key": "ssususessrseert",
+    "startDate": "1.1.2023",
+    "endDate": "31-.12.2024",
+    "sftp.host": "sftp.test.com",
+    "sftp.username": "username",
+    "sftp.password": "password",
+    "sftp.port": 22
+  },
+  {
+    "customer.name": "visma",
+    "app.host": "hr.app.com/visma",
+    "app.api-key": "ydyitssytsdyldfidfddl",
+    "startDate": "1.1.2023"
+  },
+  {
+    "customer.name": "Google",
+    "app.host": "hr.app.com/visma",
+    "app.api-key": "ydyitssytsdyldfidfddl",
+    "startDate": "1.1.2025"
+  },
+  {
+    "customer.name": "Microsoft",
+    "app.host": "hr.app.com/visma",
+    "app.api-key": "ydyitssytsdyldfidfddl",
+    "startDate": "1.1.2023",
+    "endDate": "31.12.2024"
+  }
+]
