@@ -1,0 +1,25 @@
+plugins {
+    id 'java-library'
+    id "org.springframework.boot" version "${springBootVersion}"
+    id "io.spring.dependency-management" version "${springDependencyManagement}"
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+dependencies {
+    api 'org.apache.camel.springboot:camel-spring-boot-starter:4.5.0'
+    api 'org.apache.camel.springboot:camel-quartz-starter:4.5.0'
+    api 'org.apache.camel.springboot:camel-log-starter:4.5.0'
+    api 'org.apache.camel.springboot:camel-rest-starter:4.5.0'
+    api 'org.apache.camel.springboot:camel-http-starter:4.5.0'
+    api 'org.apache.camel:camel-jackson:4.5.0'
+    api 'org.apache.commons:commons-lang3:3.14.0'
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
