@@ -23,14 +23,14 @@ public abstract class AbstractIntegrationRoute extends RouteBuilder {
                             logger.error("Error message {}", cause.getMessage());
                         }
                     }
-                })
-                .toD("""
-                        ${header.app.host}
-                        ?httpMethod=POST
-                        &authMethod=Basic
-                        &authUsername=
-                        &authPassword=
-                        """);
+                });
+//                .toD("""
+//                        ${header.app.host}
+//                        ?httpMethod=POST
+//                        &authMethod=Basic
+//                        &authUsername=
+//                        &authPassword=
+//                        """);
 
         /*from("quartz://integrationScheduler?cron={{cronScheduler}}")
                 .setBody(constant("Test"))
@@ -58,7 +58,13 @@ public abstract class AbstractIntegrationRoute extends RouteBuilder {
         return exchange -> true;
     }
 
+    /**
+     * Splitter which get integration.config.json content and map array of configurations to configuration bean object list
+     */
     protected abstract Expression getIntegrationConfigurationSplitter();
 
+    /**
+     * Build integration flow in this method
+     */
     protected abstract void buildIntegrationFlow(RouteDefinition integrationRouteDefinition);
 }

@@ -50,7 +50,7 @@ public class IntegrationRoute extends AbstractIntegrationRoute {
 
         from("direct:createCsv")
                 .process(new CreateCsvProcessor())
-                //.to("log:info");
+                .to("log:info")
                 .to("direct:writeCsvFile");
 
         from("direct:writeCsvFile")

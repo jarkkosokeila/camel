@@ -23,14 +23,14 @@ public class ConfigurationSplitter<T extends CustomerConfiguration> {
 
         ObjectMapper mapper = new ObjectMapper();
         logger.debug("Deserializing Config JSON to Client list:");
-        T[] clients;
+        T[] configuration;
         try {
-            clients = mapper.readValue(configJson, aClass);
+            configuration = mapper.readValue(configJson, aClass);
         } catch (JsonProcessingException e) {
             logger.error("Exception in ConfigSplitHandler. {}", e.getMessage());
             return null;
         }
 
-        return Arrays.asList(clients);
+        return Arrays.asList(configuration);
     }
 }

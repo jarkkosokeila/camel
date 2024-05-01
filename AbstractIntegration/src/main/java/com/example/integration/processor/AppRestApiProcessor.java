@@ -30,7 +30,7 @@ public class AppRestApiProcessor implements Processor {
         } catch (JsonProcessingException e) {
             logger.error("Exception in AppRestApiHandler. {}", e.getMessage());
 
-            throw new IntegrationException("Failed to parse date value. " + e.getMessage(), e);
+            throw new IntegrationException("Exception in AppRestApiHandler. " + e.getMessage(), e);
         }
     }
 }

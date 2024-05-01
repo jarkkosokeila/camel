@@ -10,6 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 
+
+/**
+ * This processor set all customer configuration values into header map
+ */
 public class CustomerHeadersProcessor implements Processor {
     private static final Logger logger = LoggerFactory.getLogger(CustomerHeadersProcessor.class);
 
@@ -46,7 +50,7 @@ public class CustomerHeadersProcessor implements Processor {
         } catch (IllegalAccessException e) {
             logger.error("Exception in ClientHeadersHandler. {}", e.getMessage());
 
-            throw new IntegrationException("Failed to parse date value. " + e.getMessage(), e);
+            throw new IntegrationException("Exception in ClientHeadersHandler. " + e.getMessage(), e);
         }
     }
 }
