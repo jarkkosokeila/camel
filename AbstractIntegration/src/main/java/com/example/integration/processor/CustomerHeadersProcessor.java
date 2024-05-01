@@ -2,6 +2,7 @@ package com.example.integration.processor;
 
 import com.example.integration.configuration.CustomerConfiguration;
 import com.example.integration.configuration.IntegrationConfig;
+import com.example.integration.exception.IntegrationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.slf4j.Logger;
@@ -20,39 +21,32 @@ public class CustomerHeadersProcessor implements Processor {
         Class<?> current = customerConfiguration.getClass();
         while(current.getSuperclass() != null) { // we don't want to process Object.class
             for (Field field : current.getDeclaredFields()) {
-                try {
-                    if (field.isAnnotationPresent(IntegrationConfig.class)) {
-                        IntegrationConfig integrationConfig = field.getAnnotation(IntegrationConfig.class);
-                        // changed the access to public
-                        field.setAccessible(true);
-                        Object value = field.get(customerConfiguration);
-
-                        logger.trace("Config value key: '{}' and value '{}'", integrationConfig.key(), value);
-
-                        exchange.getIn().setHeader(integrationConfig.key(), value);
-                    }
-                } catch (IllegalAccessException e) {
-                    logger.error("Exception in ClientHeadersHandler. {}", e.getMessage());
-                }
+                handleConfigurationField(exchange, customerConfiguration, field);
             }
             current = current.getSuperclass();
         }
 
         for (Field field : customerConfiguration.getClass().getDeclaredFields()) {
-            try {
-                if (field.isAnnotationPresent(IntegrationConfig.class)) {
-                    IntegrationConfig integrationConfig = field.getAnnotation(IntegrationConfig.class);
-                    // changed the access to public
-                    field.setAccessible(true);
-                    Object value = field.get(customerConfiguration);
+            handleConfigurationField(exchange, customerConfiguration, field);
+        }
+    }
 
-                    logger.trace("Config value key: '{}' and value '{}'", integrationConfig.key(), value);
+    private void handleConfigurationField(Exchange exchange, CustomerConfiguration customerConfiguration, Field field) {
+        try {
+            if (field.isAnnotationPresent(IntegrationConfig.class)) {
+                IntegrationConfig integrationConfig = field.getAnnotation(IntegrationConfig.class);
+                // changed the access to public
+                field.setAccessible(true);
+                Object value = field.get(customerConfiguration);
 
-                    exchange.getIn().setHeader(integrationConfig.key(), value);
-                }
-            } catch (IllegalAccessException e) {
-                logger.error("Exception in ClientHeadersHandler. {}", e.getMessage());
+                logger.trace("Config value key: '{}' and value '{}'", integrationConfig.key(), value);
+
+                exchange.getIn().setHeader(integrationConfig.key(), value);
             }
+        } catch (IllegalAccessException e) {
+            logger.error("Exception in ClientHeadersHandler. {}", e.getMessage());
+
+            throw new IntegrationException("Failed to parse date value. " + e.getMessage(), e);
         }
     }
 }

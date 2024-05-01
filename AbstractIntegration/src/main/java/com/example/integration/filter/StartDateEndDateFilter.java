@@ -1,6 +1,7 @@
 package com.example.integration.filter;
 
 import com.example.integration.configuration.CustomerConfiguration;
+import com.example.integration.exception.IntegrationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +38,8 @@ public class StartDateEndDateFilter implements Predicate {
             logger.error("Failed to parse date value. {}", e.getMessage());
             //System.out.println("@@@@@@@@@@@@@@@@@@@@@" + e.getMessage());
             logger.info("Client {} was filtered out", customerConfiguration.getCustomerName());
-            return false;
+
+            throw new IntegrationException("Failed to parse date value. " + e.getMessage(), e);
         }
 
         logger.info("Client {} was filtered out", customerConfiguration.getCustomerName());

@@ -1,6 +1,7 @@
 package com.example.integration.processor;
 
 import com.example.integration.dto.Results;
+import com.example.integration.exception.IntegrationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
@@ -28,6 +29,8 @@ public class AppRestApiProcessor implements Processor {
             exchange.getIn().setBody(persons);
         } catch (JsonProcessingException e) {
             logger.error("Exception in AppRestApiHandler. {}", e.getMessage());
+
+            throw new IntegrationException("Failed to parse date value. " + e.getMessage(), e);
         }
     }
 }

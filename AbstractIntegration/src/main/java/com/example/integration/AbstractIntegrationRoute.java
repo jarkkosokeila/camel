@@ -1,9 +1,9 @@
 package com.example.integration;
 
 import com.example.integration.processor.CustomerHeadersProcessor;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
+import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.RouteDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +12,26 @@ public abstract class AbstractIntegrationRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
+        errorHandler(deadLetterChannel("direct:exceptionFlow"));
+        from("direct:exceptionFlow")
+                .process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        Exception cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                        logger.info("Exception flow process");
+                        if(cause != null) {
+                            logger.error("Error message {}", cause.getMessage());
+                        }
+                    }
+                })
+                .toD("""
+                        ${header.app.host}
+                        ?httpMethod=POST
+                        &authMethod=Basic
+                        &authUsername=
+                        &authPassword=
+                        """);
+
         /*from("quartz://integrationScheduler?cron={{cronScheduler}}")
                 .setBody(constant("Test"))
                 .to("log:info");*/
@@ -29,7 +49,9 @@ public abstract class AbstractIntegrationRoute extends RouteBuilder {
                 //.to("log:info");
                 .to("direct:integrationFlowChannel");
 
-        buildIntegrationFlow();
+        RouteDefinition integrationRouteDefinition = from("direct:integrationFlowChannel");
+
+        buildIntegrationFlow(integrationRouteDefinition);
     }
 
     protected Predicate getCustomerFilter() {
@@ -38,5 +60,5 @@ public abstract class AbstractIntegrationRoute extends RouteBuilder {
 
     protected abstract Expression getIntegrationConfigurationSplitter();
 
-    protected abstract void buildIntegrationFlow();
+    protected abstract void buildIntegrationFlow(RouteDefinition integrationRouteDefinition);
 }
