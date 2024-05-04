@@ -17,6 +17,9 @@ import org.springframework.stereotype.Component;
 public class IntegrationRoute extends AbstractIntegrationRoute {
     private static final Logger logger = LoggerFactory.getLogger(IntegrationRoute.class);
 
+    private static final String CREATE_CSV_ROUTE = "direct:createCsv";
+    private static final String WRITE_CSV_ROUTE = "direct:writeCsvFile";
+
     @Override
     protected Expression getIntegrationConfigurationSplitter() {
         return method(new ConfigurationSplitter<>(SftpConfiguration[].class), "splitConfig");
@@ -46,17 +49,18 @@ public class IntegrationRoute extends AbstractIntegrationRoute {
                     logger.info("Rest response: {}", exchange.getIn().getBody().toString());
                 });*/
                 .process(new AppRestApiProcessor())
-                .to("direct:createCsv");
+                .to(CREATE_CSV_ROUTE);
 
-        from("direct:createCsv")
+        from(CREATE_CSV_ROUTE)
                 .process(new CreateCsvProcessor())
                 .to("log:info")
-                .to("direct:writeCsvFile");
+                .to(WRITE_CSV_ROUTE);
 
-        from("direct:writeCsvFile")
+        from(WRITE_CSV_ROUTE)
                 /*.process(exchange -> {
                     logger.info("Rest response: {}", exchange.getIn().getBody().toString());
                 })*/
-                .to("file://../output/fileWritingFlow?fileName=${header.customer.name}_data_${date:now:ddMMyyyy_hh-mm-ss}.csv");
+                .to("file://output/fileWritingFlow?fileName=${header.customer.name}_data_${date:now:ddMMyyyy_hh-mm-ss}.csv")
+                .to(SUCCESS_LOG_ROUTE);
     }
 }
