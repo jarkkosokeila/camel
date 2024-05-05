@@ -31,36 +31,39 @@ public class IntegrationRoute extends AbstractIntegrationRoute {
     }
 
     @Override
-    protected void buildIntegrationFlow(RouteDefinition integrationRouteDefinition) {
-        integrationRouteDefinition
-                /*.process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
+    protected void buildIntegrationRoute(RouteDefinition integrationRouteDefinition) {
+        buildReadPersonDataRoute(integrationRouteDefinition);
 
-                        logger.debug("Customer flow process");
-                    }
-                });*/
-                //.from("rest:get:https://randomuser.me/api/?results=10")
-                //.toD("rest:get:https?host=randomuser.me/api/?results=10")
+        buildCreateCSVRoute();
+
+        buildWriteCSVRoute();
+    }
+
+    private void buildReadPersonDataRoute(RouteDefinition from) {
+        from
+                .log("Reading customer ${header.customer.name} data")
                 .setHeader(Exchange.HTTP_METHOD, constant("GET"))
                 .to("https://randomuser.me/api/?results=10")
                 .convertBodyTo(String.class)
-                /*.process(exchange -> {
-                    logger.info("Rest response: {}", exchange.getIn().getBody().toString());
-                });*/
                 .process(new AppRestApiProcessor())
-                .to(CREATE_CSV_ROUTE);
+                .to(IntegrationRoute.CREATE_CSV_ROUTE);
+    }
 
-        from(CREATE_CSV_ROUTE)
+    private void buildCreateCSVRoute() {
+        from(IntegrationRoute.CREATE_CSV_ROUTE)
+                .log("Create csv from customer ${header.customer.name} data")
                 .process(new CreateCsvProcessor())
                 .to("log:info")
-                .to(WRITE_CSV_ROUTE);
+                .to(IntegrationRoute.WRITE_CSV_ROUTE);
+    }
 
-        from(WRITE_CSV_ROUTE)
+    private void buildWriteCSVRoute() {
+        from(IntegrationRoute.WRITE_CSV_ROUTE)
+                .log("Write csv file from customer ${header.customer.name} data")
                 /*.process(exchange -> {
                     logger.info("Rest response: {}", exchange.getIn().getBody().toString());
                 })*/
                 .to("file://output/fileWritingFlow?fileName=${header.customer.name}_data_${date:now:ddMMyyyy_hh-mm-ss}.csv")
-                .to(SUCCESS_LOG_ROUTE);
+                .to(AbstractIntegrationRoute.SUCCESS_LOG_ROUTE);
     }
 }

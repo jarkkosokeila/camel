@@ -3,17 +3,17 @@ package com.example.integration.configuration;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SftpConfiguration extends CustomerConfiguration {
-    @IntegrationConfig(key = ConfigValues.SFTP_HOST)
-    @JsonProperty(ConfigValues.SFTP_HOST)
+    @IntegrationConfig(key = ConfigKeyValue.SFTP_HOST)
+    @JsonProperty(ConfigKeyValue.SFTP_HOST)
     private String sftpHost;
-    @IntegrationConfig(key = ConfigValues.SFTP_USERNAME)
-    @JsonProperty(ConfigValues.SFTP_USERNAME)
+    @IntegrationConfig(key = ConfigKeyValue.SFTP_USERNAME)
+    @JsonProperty(ConfigKeyValue.SFTP_USERNAME)
     private String sftpUsername;
-    @IntegrationConfig(key = ConfigValues.SFTP_PASSWORD)
-    @JsonProperty(ConfigValues.SFTP_PASSWORD)
+    @IntegrationConfig(key = ConfigKeyValue.SFTP_PASSWORD)
+    @JsonProperty(ConfigKeyValue.SFTP_PASSWORD)
     private String sftpPassword;
-    @IntegrationConfig(key = ConfigValues.SFTP_PORT)
-    @JsonProperty(ConfigValues.SFTP_PORT)
+    @IntegrationConfig(key = ConfigKeyValue.SFTP_PORT)
+    @JsonProperty(ConfigKeyValue.SFTP_PORT)
     private int sftpPort;
 
     public String getSftpHost() {

@@ -23,10 +23,10 @@ public class StartDateEndDateFilter implements Predicate {
         CustomerConfiguration customerConfiguration = exchange.getIn().getBody(CustomerConfiguration.class);
         Date now = Calendar.getInstance().getTime();
 
+        String startDateStr = customerConfiguration.getStartDate();
+        String endDateStr = customerConfiguration.getEndDate();
         try {
-            String startDateStr = customerConfiguration.getStartDate();
             Date startDate = StringUtils.isNoneBlank(startDateStr) ? new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).parse(startDateStr) : null;
-            String endDateStr = customerConfiguration.getEndDate();
             Date endDate = StringUtils.isNoneBlank(endDateStr) ? new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).parse(endDateStr) : null;
 
             if((startDate != null && startDate.before(now)) && (endDate == null || endDate.after(now))) {
@@ -37,12 +37,12 @@ public class StartDateEndDateFilter implements Predicate {
             //logger.error("Exception", e);
             logger.error("Failed to parse date value. {}", e.getMessage());
             //System.out.println("@@@@@@@@@@@@@@@@@@@@@" + e.getMessage());
-            logger.info("Client {} was filtered out", customerConfiguration.getCustomerName());
+            //logger.info("Customer {} was filtered out", customerConfiguration.getCustomerName());
 
             throw new IntegrationException("Failed to parse date value. " + e.getMessage(), e);
         }
 
-        logger.info("Client {} was filtered out", customerConfiguration.getCustomerName());
+        logger.info("Customer {} was filtered out. Integration was configured to run between {} and {}", customerConfiguration.getCustomerName(), startDateStr, endDateStr);
         return false;
     }
 }

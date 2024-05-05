@@ -18,7 +18,7 @@ public class ConfigurationSplitter<T extends CustomerConfiguration> {
         this.aClass = aClass;
     }
 
-    public List splitConfig(Exchange exchange) {
+    public List<T> splitConfig(Exchange exchange) {
         String configJson = exchange.getIn().getBody(String.class);
 
         ObjectMapper mapper = new ObjectMapper();

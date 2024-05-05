@@ -1,7 +1,7 @@
 package com.example.integration.configuration;
 
-public class ConfigValues {
-    private ConfigValues() {
+public class ConfigKeyValue {
+    private ConfigKeyValue() {
     }
 
     public static final String CUSTOMER_NAME = "customer.name";

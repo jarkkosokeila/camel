@@ -3,20 +3,20 @@ package com.example.integration.configuration;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class CustomerConfiguration {
-    @IntegrationConfig(key = ConfigValues.CUSTOMER_NAME)
-    @JsonProperty(ConfigValues.CUSTOMER_NAME)
+    @IntegrationConfig(key = ConfigKeyValue.CUSTOMER_NAME)
+    @JsonProperty(ConfigKeyValue.CUSTOMER_NAME)
     private String customerName;
-    @IntegrationConfig(key = ConfigValues.APP_HOST)
-    @JsonProperty(ConfigValues.APP_HOST)
+    @IntegrationConfig(key = ConfigKeyValue.APP_HOST)
+    @JsonProperty(ConfigKeyValue.APP_HOST)
     private String appHost;
-    @IntegrationConfig(key = ConfigValues.APP_API_KEY)
-    @JsonProperty(ConfigValues.APP_API_KEY)
+    @IntegrationConfig(key = ConfigKeyValue.APP_API_KEY)
+    @JsonProperty(ConfigKeyValue.APP_API_KEY)
     private String appApiKey;
-    @IntegrationConfig(key = ConfigValues.START_DATE)
-    @JsonProperty(ConfigValues.START_DATE)
+    @IntegrationConfig(key = ConfigKeyValue.START_DATE)
+    @JsonProperty(ConfigKeyValue.START_DATE)
     private String startDate;
-    @IntegrationConfig(key = ConfigValues.END_DATE)
-    @JsonProperty(ConfigValues.END_DATE)
+    @IntegrationConfig(key = ConfigKeyValue.END_DATE)
+    @JsonProperty(ConfigKeyValue.END_DATE)
     private String endDate;
 
     public String getCustomerName() {
