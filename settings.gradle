@@ -2,4 +2,5 @@ rootProject.name = 'camel'
 include 'AbstractIntegration'
 include 'TestIntegration'
 include 'LogEndpoint'
+include 'TestIntegration2'
 

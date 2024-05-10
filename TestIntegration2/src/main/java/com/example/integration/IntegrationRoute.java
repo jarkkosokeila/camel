@@ -3,7 +3,6 @@ package com.example.integration;
 import com.example.integration.configuration.SftpConfiguration;
 import com.example.integration.filter.StartDateEndDateFilter;
 import com.example.integration.processor.AppRestApiProcessor;
-import com.example.integration.processor.CreateCsvProcessor;
 import com.example.integration.splitter.ConfigurationSplitter;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -17,7 +16,7 @@ import org.springframework.stereotype.Component;
 public class IntegrationRoute extends AbstractIntegrationRoute {
     private static final Logger logger = LoggerFactory.getLogger(IntegrationRoute.class);
 
-    private static final String CREATE_CSV_ROUTE = "direct:createCsv";
+    private static final String SPLIT_RESULTS_ROUTE = "direct:splitResults";
     private static final String WRITE_CSV_ROUTE = "direct:writeCsvFile";
 
     @Override
@@ -42,29 +41,23 @@ public class IntegrationRoute extends AbstractIntegrationRoute {
                 .to("https://randomuser.me/api/?results=10")
                 .convertBodyTo(String.class)
                 .process(new AppRestApiProcessor())
-                .to(IntegrationRoute.CREATE_CSV_ROUTE);
+                .to(IntegrationRoute.SPLIT_RESULTS_ROUTE);
 
-        buildCreateCSVRoute();
+        buildSplitChoiceRoute();
     }
 
-    private void buildCreateCSVRoute() {
-        from(IntegrationRoute.CREATE_CSV_ROUTE)
-                .log("Create csv from customer ${header.customer.name} data")
-                .process(new CreateCsvProcessor())
-                .to("log:info")
-                .to(IntegrationRoute.WRITE_CSV_ROUTE);
-
-        buildWriteCSVRoute();
-    }
-
-    private void buildWriteCSVRoute() {
-        from(IntegrationRoute.WRITE_CSV_ROUTE)
-                .log("Write csv file from customer ${header.customer.name} data")
-                /*.process(exchange -> {
-                    logger.info("Rest response: {}", exchange.getIn().getBody().toString());
-                })*/
-                //.to("sftp:localhost:2222/test?username=demo&password=demo&fileName=${header.customer.name}_data_${date:now:ddMMyyyy_hh-mm-ss}.csv")
-                .to("file://output/fileWritingFlow?fileName=${header.customer.name}_data_${date:now:ddMMyyyy_hh-mm-ss}.csv")
-                .to(AbstractIntegrationRoute.SUCCESS_LOG_ROUTE);
+    private void buildSplitChoiceRoute() {
+        from(IntegrationRoute.SPLIT_RESULTS_ROUTE)
+                .log("Create gender handling from customer ${header.customer.name} data")
+                .split(body())
+                    .to("log:info")
+                    .choice()
+                        .when(simple("${body.getGender()} == 'male'"))
+                            .log("Male handling")
+                        .otherwise()
+                            .log("Female handling")
+                    .end()
+                .end()
+                .to(IntegrationRoute.SUCCESS_LOG_ROUTE);
     }
 }
