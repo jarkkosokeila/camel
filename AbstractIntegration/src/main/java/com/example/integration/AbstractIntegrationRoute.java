@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractIntegrationRoute extends RouteBuilder {
     private static final Logger logger = LoggerFactory.getLogger(AbstractIntegrationRoute.class);
 
-    private static final String EXCEPTION_ROUTE = "direct:exceptionRoute";
+    protected static final String EXCEPTION_ROUTE = "direct:exceptionRoute";
 
     private static final String INIT_ROUTE = "direct:initRoute";
     private static final String INTEGRATION_ROUTE = "direct:integrationRoute";
@@ -76,8 +76,8 @@ public abstract class AbstractIntegrationRoute extends RouteBuilder {
 
                     exchange.getIn().setBody(bodyBuilder.toString());
                 })
-                .setHeader("Content-Type", constant("application/json"))
-                .toD("http:${header.app.host}/api/save-interface-log?httpMethod=POST");
+                .setHeader("Content-Type", constant("application/json"));
+                //.toD("http:${header.app.host}/api/save-interface-log?httpMethod=POST");
     }
 
     /**
@@ -106,8 +106,8 @@ public abstract class AbstractIntegrationRoute extends RouteBuilder {
 
                     exchange.getIn().setBody(bodyBuilder.toString());
                 })
-                .setHeader("Content-Type", constant("application/json"))
-                .toD("http:${header.app.host}/api/save-interface-log?httpMethod=POST");
+                .setHeader("Content-Type", constant("application/json"));
+                //.toD("http:${header.app.host}/api/save-interface-log?httpMethod=POST");
     }
 
     protected Predicate getCustomerFilter() {
