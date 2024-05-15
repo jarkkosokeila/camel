@@ -12,9 +12,8 @@ import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.spi.DataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 public class RetryExceptionRoute extends AbstractIntegrationRoute {
     private static final Logger logger = LoggerFactory.getLogger(RetryExceptionRoute.class);
 

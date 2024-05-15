@@ -65,6 +65,6 @@ public class IntegrationRoute extends AbstractIntegrationRoute {
                 })*/
                 //.to("sftp:localhost:2222/test?username=demo&password=demo&fileName=${header.customer.name}_data_${date:now:ddMMyyyy_hh-mm-ss}.csv")
                 .to("file://output/fileWritingFlow?fileName=${header.customer.name}_data_${date:now:ddMMyyyy_hh-mm-ss}.csv")
-                .to(AbstractIntegrationRoute.SUCCESS_LOG_ROUTE);
+                .to(SUCCESS_LOG_ROUTE);
     }
 }
