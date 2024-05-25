@@ -1,6 +1,6 @@
 package com.example.integration.filter;
 
-import com.example.integration.configuration.CustomerConfiguration;
+import com.example.integration.configuration.ConfigKeyValue;
 import com.example.integration.exception.IntegrationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
@@ -20,11 +20,10 @@ public class StartDateEndDateFilter implements Predicate {
 
     @Override
     public boolean matches(Exchange exchange) {
-        CustomerConfiguration customerConfiguration = exchange.getIn().getBody(CustomerConfiguration.class);
         Date now = Calendar.getInstance().getTime();
 
-        String startDateStr = customerConfiguration.getStartDate();
-        String endDateStr = customerConfiguration.getEndDate();
+        String startDateStr = exchange.getProperty(ConfigKeyValue.START_DATE, String.class);
+        String endDateStr = exchange.getProperty(ConfigKeyValue.END_DATE, String.class);
         try {
             Date startDate = StringUtils.isNoneBlank(startDateStr) ? new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).parse(startDateStr) : null;
             Date endDate = StringUtils.isNoneBlank(endDateStr) ? new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).parse(endDateStr) : null;
@@ -42,7 +41,7 @@ public class StartDateEndDateFilter implements Predicate {
             throw new IntegrationException("Failed to parse date value. " + e.getMessage(), e);
         }
 
-        logger.info("Customer {} was filtered out. Integration was configured to run between {} and {}", customerConfiguration.getCustomerName(), startDateStr, endDateStr);
+        logger.info("Customer {} was filtered out. Integration was configured to run between {} and {}", exchange.getProperty(ConfigKeyValue.CUSTOMER_NAME, String.class), startDateStr, endDateStr);
         return false;
     }
 }

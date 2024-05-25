@@ -3,6 +3,8 @@ package com.example.integration;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jackson.JacksonDataFormat;
+import org.apache.camel.component.jackson.ListJacksonDataFormat;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,12 +12,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Map;
 
 public abstract class AbstractRemoteShell extends RouteBuilder {
     private ServerSocket serverSocket;
 
     @Override
     public void configure() throws Exception {
+        JacksonDataFormat format = new ListJacksonDataFormat(Map.class);
         from("timer://runOnce?repeatCount=1").routeId("start").autoStartup(false)
                 .onCompletion()
                     .process(exchange -> {
@@ -25,7 +29,8 @@ public abstract class AbstractRemoteShell extends RouteBuilder {
                 .pollEnrich("file://config/?fileName=integration.config.json&noop=true&idempotent=false")
                 .log("Read configuration and split configuration json array to Configuration bean list")
                 .convertBodyTo(String.class)
-                .split(getIntegrationConfigurationSplitter()).streaming()
+                .unmarshal(format)
+                .split(body()).streaming()
                 //.to("log:info")
                 .to("direct:initRoute");
 
@@ -87,6 +92,4 @@ public abstract class AbstractRemoteShell extends RouteBuilder {
             }
         }
     }
-
-    protected abstract Expression getIntegrationConfigurationSplitter();
 }

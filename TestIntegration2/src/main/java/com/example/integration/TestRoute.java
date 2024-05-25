@@ -1,9 +1,7 @@
 package com.example.integration;
 
-import com.example.integration.configuration.SftpConfiguration;
-import com.example.integration.splitter.ConfigurationSplitter;
-import org.apache.camel.Expression;
 import org.apache.camel.model.RouteDefinition;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -11,15 +9,18 @@ import java.util.List;
 @Component
 public class TestRoute extends AbstractIntegrationRoute {
 
+    @Value("${cronScheduler3}")
+    private String cron;
+
     @Override
-    protected Expression getIntegrationConfigurationSplitter() {
-        return method(new ConfigurationSplitter<>(SftpConfiguration[].class), "splitConfig");
+    protected String getCron() {
+        return cron;
     }
 
     @Override
     protected void buildIntegrationRoute(RouteDefinition from) {
         from
-                .log("Reading customer ${header.customer.name} data")
+                .log("Reading customer ${exchangeProperty.customer.name} data")
                 //.setHeader(Exchange.HTTP_METHOD, constant("GET"))
                 .to("rest:get:api?host=https://randomuser.me&queryParameters=results=2")
                     .choice()

@@ -3,4 +3,3 @@ include 'AbstractIntegration'
 include 'TestIntegration'
 include 'LogEndpoint'
 include 'TestIntegration2'
-

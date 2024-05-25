@@ -4,19 +4,23 @@ import com.example.integration.configuration.ConfigKeyValue;
 import com.example.integration.processor.CustomerHeadersProcessor;
 import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jackson.JacksonDataFormat;
+import org.apache.camel.component.jackson.ListJacksonDataFormat;
 import org.apache.camel.model.RouteDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 public abstract class AbstractIntegrationRoute extends RouteBuilder {
     private static final Logger logger = LoggerFactory.getLogger(AbstractIntegrationRoute.class);
 
-    protected static final String EXCEPTION_ROUTE = "direct:exceptionRoute";
+    protected final String EXCEPTION_ROUTE = "direct:exceptionRoute" + getClass().getSimpleName();
 
-    private static final String INIT_ROUTE = "direct:initRoute";
-    private static final String INTEGRATION_ROUTE = "direct:integrationRoute";
+    private final String INIT_ROUTE = "direct:initRoute" + getClass().getSimpleName();;
+    private final String INTEGRATION_ROUTE = "direct:integrationRoute" + getClass().getSimpleName();;
 
-    protected static final String SUCCESS_LOG_ROUTE = "direct:successLogRoute";
+    protected final String SUCCESS_LOG_ROUTE = "direct:successLogRoute" + getClass().getSimpleName();;
 
     @Override
     public void configure() throws Exception {
@@ -37,32 +41,36 @@ public abstract class AbstractIntegrationRoute extends RouteBuilder {
      * This method reads configuration (json) file and split each customer configuration to configuration bean
      */
     private void buildConfigurationReaderRoute() {
-        from("file://config/?fileName=integration.config.json&noop=true&idempotent=false&scheduler=quartz&scheduler.cron={{cronScheduler}}")
+        JacksonDataFormat format = new ListJacksonDataFormat(Map.class);
+        from("file://config/?fileName=integration.config.json&noop=true&idempotent=false&scheduler=quartz&scheduler.cron=" + getCron())
                 .log("Read configuration and split configuration json array to Configuration bean list")
                 .convertBodyTo(String.class)
-                .split(getIntegrationConfigurationSplitter()).streaming()
+                .unmarshal(format)
+                .split(body()).streaming()
                 //.to("log:info")
-                .to(AbstractIntegrationRoute.INIT_ROUTE);
+                .to(INIT_ROUTE);
     }
+
+    protected abstract String getCron();
 
     /**
      * This method set customer configuration values into to header parameters.<br>
      * Also, this method filters customers from integration if filter is defined in integration implementation
      */
     private void buildInitRoute() {
-        from(AbstractIntegrationRoute.INIT_ROUTE)
+        from(INIT_ROUTE)
                 .log("Set customer configuration values into header parameters and do filtering if filter is defined")
                 .process(new CustomerHeadersProcessor())
                 .filter(getCustomerFilter())
                 //.to("log:info");
-                .to(AbstractIntegrationRoute.INTEGRATION_ROUTE);
+                .to(INTEGRATION_ROUTE);
     }
 
     /**
      * This method send success rest request into log endpoint
      */
     private void buildSuccessfulRoute() {
-        from(AbstractIntegrationRoute.SUCCESS_LOG_ROUTE)
+        from(SUCCESS_LOG_ROUTE)
                 .log("Integration was completed successfully for customer ${header.customer.name}. Send log data to logger endpoint")
                 .process(exchange -> {
                     String customer = (String) exchange.getIn().getHeader(ConfigKeyValue.CUSTOMER_NAME);
@@ -113,11 +121,6 @@ public abstract class AbstractIntegrationRoute extends RouteBuilder {
     protected Predicate getCustomerFilter() {
         return exchange -> true;
     }
-
-    /**
-     * Splitter which get integration.config.json content and map array of configurations to configuration bean object list
-     */
-    protected abstract Expression getIntegrationConfigurationSplitter();
 
     /**
      * Build integration route in this method
