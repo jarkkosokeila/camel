@@ -47,6 +47,8 @@ public abstract class AbstractIntegrationRoute extends RouteBuilder {
                 .convertBodyTo(String.class)
                 .unmarshal(format)
                 .split(body()).streaming()
+                .log("Set customer configuration values into header parameters and do filtering if filter is defined")
+                .process(new CustomerHeadersProcessor())
                 //.to("log:info")
                 .to(INIT_ROUTE);
     }
@@ -59,8 +61,6 @@ public abstract class AbstractIntegrationRoute extends RouteBuilder {
      */
     private void buildInitRoute() {
         from(INIT_ROUTE)
-                .log("Set customer configuration values into header parameters and do filtering if filter is defined")
-                .process(new CustomerHeadersProcessor())
                 .filter(getCustomerFilter())
                 //.to("log:info");
                 .to(INTEGRATION_ROUTE);

@@ -1,5 +1,7 @@
 package com.example.integration;
 
+import com.example.integration.filter.StartDateEndDateFilter;
+import org.apache.camel.Predicate;
 import org.apache.camel.model.RouteDefinition;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,11 @@ public class TestRoute extends AbstractIntegrationRoute {
     @Override
     protected String getCron() {
         return cron;
+    }
+
+    @Override
+    protected Predicate getCustomerFilter() {
+        return new StartDateEndDateFilter();
     }
 
     @Override
@@ -36,6 +43,5 @@ public class TestRoute extends AbstractIntegrationRoute {
                 })
                 .split().jsonpathWriteAsString("$.results[*]", List.class)
                 .to("log:info");
-
     }
 }
