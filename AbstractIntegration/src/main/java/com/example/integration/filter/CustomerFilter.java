@@ -4,6 +4,7 @@ import com.example.integration.configuration.ConfigKeyValue;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class CustomerFilter implements Predicate {
@@ -15,8 +16,10 @@ public class CustomerFilter implements Predicate {
 
     @Override
     public boolean matches(Exchange exchange) {
+        Map<String, String> config = exchange.getIn().getBody(Map.class);
+
         if(customer.get() != null) {
-            String customer = exchange.getProperty(ConfigKeyValue.CUSTOMER_NAME, String.class);
+            String customer = config.get(ConfigKeyValue.CUSTOMER_NAME);
             return customer.equals(this.customer.get());
         }
         return true;

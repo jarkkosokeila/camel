@@ -9,8 +9,9 @@ import org.apache.camel.spi.DataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-//@Component
+@Component
 public class IntegrationRoute extends AbstractIntegrationRoute {
     private static final Logger logger = LoggerFactory.getLogger(IntegrationRoute.class);
 

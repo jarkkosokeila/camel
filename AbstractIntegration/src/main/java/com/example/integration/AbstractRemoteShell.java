@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
@@ -37,15 +38,13 @@ public abstract class AbstractRemoteShell extends RouteBuilder {
                     .convertBodyTo(String.class)
                     .unmarshal(format)
                     .split(body()).streaming()
-                    .process(new CustomerHeadersProcessor())
                     .filter(new CustomerFilter(customer))
                     //.to("log:info")
                     .to("direct:initRoute" + route);
         }
 
-
-
-        serverSocket = new ServerSocket(2222);
+        serverSocket = new ServerSocket();
+        serverSocket.bind(new InetSocketAddress("127.0.0.1", 2222));
         Runnable basic = () -> {
             while (true) {
                 try {
@@ -121,11 +120,11 @@ public abstract class AbstractRemoteShell extends RouteBuilder {
         }
 
         private void printui(PrintWriter out, List<String> integrationRoutes) {
-            out.println("Commands:\n");
+            out.println("Commands:");
             for (String route : integrationRoutes) {
-                out.println("start " + route + " <customer>");
+                out.println("   start " + route + " <customer>");
             }
-            out.println("exit");
+            out.println("   exit");
             out.print("> ");
             out.flush();
         }

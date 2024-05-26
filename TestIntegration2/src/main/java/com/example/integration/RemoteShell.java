@@ -14,6 +14,6 @@ public class RemoteShell extends AbstractRemoteShell {
 
     @Override
     protected List<String> getIntegrationRoutes() {
-        return List.of("TestRoute");
+        return List.of("TestRoute", "IntegrationRoute");
     }
 }
