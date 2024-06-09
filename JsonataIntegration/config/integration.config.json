@@ -1,0 +1,14 @@
+[
+  {
+    "customer.name": "visma",
+    "app.host": "localhost:9999",
+    "app.api-key": "ydyitssytsdyldfidfddl",
+    "startDate": "1.1.2023"
+  },
+  {
+    "customer.name": "Google",
+    "app.host": "localhost:9999",
+    "app.api-key": "ydyitssytsdyldfidfddl",
+    "startDate": "1.1.2023"
+  }
+]

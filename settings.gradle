@@ -3,3 +3,5 @@ include 'AbstractIntegration'
 include 'TestIntegration'
 include 'LogEndpoint'
 include 'TestIntegration2'
+include 'JsonataIntegration'
+

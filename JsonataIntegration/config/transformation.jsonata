@@ -1,0 +1,15 @@
+(
+  $toNumber := function($val) {( $val ? $number($val): null; )};
+  $toString := function($val) {( $val ? $string($val): null; )};
+  {
+    "UserName": login.username,
+    "FirstName": name.first,
+    "LastName": name.last,
+    "Age": $toNumber(dob.age),
+    "StreetAddress": location.street.name & " " & location.street.number,
+    "PostalNumber": location.postcode,
+    "eMailAddress": email,
+    "PostalCity": location.city,
+    "PhoneNumber": phone
+  }
+)
